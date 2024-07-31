@@ -1,0 +1,59 @@
+CONSTANTES:
+    NUM_SENSORES = 5
+    PINES_SENSORES = [A0, A1, A2, A3, A4]
+    PIN_LED = 13
+    PIN_BOCINA = 12
+    UMBRALES = [100, 200, 300, 400, 500]
+
+FUNCIÓN CONFIGURACIÓN:
+    INICIAR comunicación serial
+    PARA cada PIN en PINES_SENSORES:
+        CONFIGURAR PIN como ENTRADA
+    CONFIGURAR PIN_LED como SALIDA
+    CONFIGURAR PIN_BOCINA como SALIDA
+    ENCENDER LED (PIN_LED)
+
+FUNCIÓN PRINCIPAL:
+    MIENTRAS verdadero:
+        nivel_agua = 0
+        
+        PARA i DESDE 0 HASTA NUM_SENSORES - 1:
+            valor_sensor = LEER valor analógico de PINES_SENSORES[i]
+            IMPRIMIR "Sensor ", i+1, ": ", valor_sensor
+            
+            SI valor_sensor > UMBRALES[i]:
+                INCREMENTAR nivel_agua
+        
+        IMPRIMIR "Nivel de agua: ", nivel_agua
+        
+        SI nivel_agua es igual a NUM_SENSORES:
+            ENCENDER LED (PIN_LED)
+            ACTIVAR BOCINA (PIN_BOCINA) con frecuencia 1000Hz por 1 segundo
+            IMPRIMIR "¡ALERTA! Contenedor lleno"
+        SINO:
+            APAGAR LED (PIN_LED)
+        
+        ESPERAR 1 segundo
+
+FUNCIÓN CALIBRAR:
+    IMPRIMIR "Iniciando calibración..."
+    IMPRIMIR "Asegúrese de que el contenedor esté vacío y presione cualquier tecla."
+    ESPERAR entrada del usuario
+    
+    PARA i DESDE 0 HASTA NUM_SENSORES - 1:
+        valores_minimos[i] = LEER valor analógico de PINES_SENSORES[i]
+    
+    IMPRIMIR "Ahora llene el contenedor hasta el máximo y presione cualquier tecla."
+    ESPERAR entrada del usuario
+    
+    PARA i DESDE 0 HASTA NUM_SENSORES - 1:
+        valores_maximos[i] = LEER valor analógico de PINES_SENSORES[i]
+        UMBRALES[i] = (valores_minimos[i] + valores_maximos[i]) / 2
+    
+    IMPRIMIR "Calibración completada. Nuevos umbrales:"
+    PARA i DESDE 0 HASTA NUM_SENSORES - 1:
+        IMPRIMIR "Sensor ", i+1, ": ", UMBRALES[i]
+
+INICIAR PROGRAMA:
+    EJECUTAR FUNCIÓN CONFIGURACIÓN
+    EJECUTAR FUNCIÓN PRINCIPAL
